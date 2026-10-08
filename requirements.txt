@@ -4,6 +4,6 @@ Flask-Session
 pytz
 requests
 numpy
-opencv-python<5
+opencv-python-headless<5
 scikit-image
 mediapipe
