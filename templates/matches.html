@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Matches
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="matches-page">
+            {% include "search_bar.html" %}
+
+            {% if categories %}
+                <div class="category-carousel mb-5">
+                    <button class="carousel-arrow prev" type="button" aria-label="Scroll categories left" hidden>&lsaquo;</button>
+                    <div class="category-track">
+                        {% for category in categories %}
+                            <a class="category-chip" href="/products?category={{ category['category'] | urlencode }}">
+                                <img alt="" loading="lazy" src="{{ category['img_url'] or '/static/images/landing/Bandaids.jpg' }}">
+                                <span class="text-capitalize">{{ category["category"] }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-arrow next" type="button" aria-label="Scroll categories right" hidden>&rsaquo;</button>
+                </div>
+            {% else %}
+                <p class="text-muted mb-5">No categories yet — check back soon.</p>
+            {% endif %}
+
+            <div class="page-info">
+                <h2 class="h5 mb-1">Matches for {{ profile["label"] }}</h2>
+                <p class="text-muted mb-5">Curated for your tone and {{ profile["sensitivity_type"] }} sensitivity.</p>
+            </div>
+
+
+            <h2 class="h5 mb-3">Picked for you</h2>
+            {% if products %}
+                <div class="row g-3 justify-content-left">
+                    {% for product in products %}
+                        {% include "product_card.html" %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No matches yet for your tone &mdash; check back soon.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.querySelectorAll(".category-carousel").forEach(function (carousel) {
+            const track = carousel.querySelector(".category-track");
+            const prev = carousel.querySelector(".prev");
+            const next = carousel.querySelector(".next");
+
+            // Show an arrow only when there is more to scroll in that direction
+            function updateArrows() {
+                prev.hidden = track.scrollLeft <= 0;
+                next.hidden = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+            }
+
+            prev.addEventListener("click", function () {
+                track.scrollBy({ left: -track.clientWidth * 0.8, behavior: "smooth" });
+            });
+            next.addEventListener("click", function () {
+                track.scrollBy({ left: track.clientWidth * 0.8, behavior: "smooth" });
+            });
+            track.addEventListener("scroll", updateArrows);
+            window.addEventListener("resize", updateArrows);
+            updateArrows();
+        });
+    </script>
+{% endblock %}

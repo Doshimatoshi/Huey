@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Skin Profile
+{% endblock %}
+
+{% block main %}
+    <div class="tone-setup">
+        <form action="/setup" data-method="{{ method }}" method="post">
+            {% if method == "hex" %}
+                <h1 class="h3 mb-1">Choose your Monk Skin Tone</h1>
+                <p class="text-muted setup mb-4">Already know your MST value? Pick it directly from the scale.</p>
+
+                <div class="dropdown mb-3">
+                    <button aria-expanded="false" class="btn btn-outline-secondary dropdown-toggle d-inline-flex align-items-center gap-2" data-bs-toggle="dropdown" id="mst-toggle" type="button">
+                        <span class="mst-swatch" id="mst-toggle-swatch"></span>
+                        <span id="mst-toggle-label">Select a tone&hellip;</span>
+                    </button>
+                    <ul aria-labelledby="mst-toggle" class="dropdown-menu">
+                        {% for tone in mst_scale %}
+                            <li>
+                                <button class="dropdown-item d-flex align-items-center gap-2" data-mst-hex="{{ tone['hex_value'] }}" data-mst-id="{{ tone['id'] }}" data-mst-label="{{ tone['label'] }}" type="button">
+                                    <span class="mst-swatch" data-swatch-color="{{ tone['hex_value'] }}"></span>
+                                    <span class="flex-grow-1">{{ tone["label"] }}</span>
+                                    <span class="mst-check" hidden>&check;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <input id="mst-value" name="mst_value" type="hidden">
+            {% else %}
+                <h1 class="h3 mb-4">{{ "Upload an image" if method == "upload" else "Take a selfie" }}</h1>
+                <p class="text-muted setup">
+                    We'll detect your face and estimate your Monk Skin Tone automatically. Use even, natural light for the best result.
+                    Your photo is analyzed and then discarded. It's never stored.
+                </p>
+
+                {% if method == "upload" %}
+                    <div class="mb-3">
+                        <input accept="image/*" class="form-control mx-auto w-auto" id="file-input" type="file">
+                    </div>
+                {% else %}
+                    <div class="mb-3">
+                        <video autoplay class="mw-100 rounded" id="video" muted playsinline style="max-height: 360px"></video>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-secondary" hidden id="capture" type="button">Take photo</button>
+                        <button class="btn btn-outline-secondary" hidden id="retake" type="button">Retake</button>
+                    </div>
+                {% endif %}
+
+                <div class="mb-2">
+                    <div class="photo-stage" hidden id="stage">
+                        <canvas id="canvas"></canvas>
+                        <div class="ref-marker" hidden id="ref-marker"></div>
+                    </div>
+                </div>
+
+                <div class="mb-2" hidden id="photo-actions">
+                    <button class="btn btn-outline-secondary btn-sm" id="pick-ref" type="button">Set white point</button>
+                    <button class="btn btn-link btn-sm" hidden id="clear-ref" type="button">Use automatic white balance</button>
+                </div>
+                <p class="text-muted small" hidden id="ref-hint">Click something white or light grey in the photo, like a sheet of paper or a plain wall, to correct for lighting.</p>
+
+                <p class="mb-3" hidden id="analyzing" role="status">Analyzing photo&hellip;</p>
+                <p class="text-danger mb-3" hidden id="analysis-error" role="alert"></p>
+
+                <div class="mb-3" hidden id="matches">
+                    <p class="text-muted index mb-2">Here's our best guess &mdash; tap a swatch to change it.</p>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center" id="match-list"></div>
+                </div>
+
+                <p class="mb-3 setup">
+                    <a href="/setup?method=hex">Or choose your tone directly from the scale</a>
+                </p>
+
+                <input id="mst-value" name="mst_value" type="hidden">
+                <input id="hex-value" name="hex" type="hidden">
+            {% endif %}
+
+            <div class="mb-3">
+                <span class="d-inline-block border rounded align-middle" id="swatch" style="width: 40px; height: 40px"></span>
+                <span class="align-middle ms-2" id="swatch-label">No colour chosen yet</span>
+            </div>
+
+            <div class="mb-3">
+                <select class="form-select mx-auto w-auto" name="sensitivity" required>
+                    <option disabled selected value="">How reactive is your skin to the sun?</option>
+                    <option value="low">Low</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" id="submit" type="submit">Save profile</button>
+            <a class="btn btn-link" href="/">Cancel</a>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/tone_setup.js"></script>
+{% endblock %}

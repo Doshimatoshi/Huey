@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <div class="login-page">
+        <div class="login-img">
+            <img alt="Logo" src="/static/images/graphics/mst_tone.jpg">
+        </div>
+        <div class="login-form">
+            <form action="/login" method="post">
+                <div class="mb-3">
+                    <input autocomplete="off" autofocus class="form-control w-100" name="username" placeholder="Username" type="text">
+                </div>
+                <div class="mb-3">
+                    <input class="form-control w-100" name="password" placeholder="Password" type="password">
+                </div>
+                <button class="btn btn-primary" type="submit">Log In</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{# One product card; shared by matches.html and products.html #}
+<div class="col-6 col-md-3">
+    <div class="card product" id="product-{{ product['id'] }}">
+        <img alt="" class="card-img-top product-img" loading="lazy" src="{{ product['img_url'] or '/static/images/landing/Bandaids.jpg' }}">
+        <div class="card-body d-flex flex-column text-start">
+            <h3 class="h6 card-title">{{ product["name"] }}</h3>
+            <p class="card-text text-muted mb-1">{{ product["brand"] }} &middot; {{ product["category"] }}</p>
+            {% if product["price"] %}
+                <p class="card-text fw-semibold mb-1">{{ product["price"] }}</p>
+            {% endif %}
+            {% if product["sensitivity_flags"] %}
+                <p class="card-text"><small class="text-muted">{{ product["sensitivity_flags"] }}</small></p>
+            {% endif %}
+            {% if product["url"] %}
+                <a class="btn btn-sm btn-outline-secondary mt-auto align-self-start"
+                href="{{ product['url'] }}" rel="noopener noreferrer" target="_blank">
+                    View<span class="visually-hidden"> {{ product["name"] }} (opens in new tab)</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block main %}
+    <div id="index-home">
+        <div class="container">
+            <h1 class="mb-4" id="welcome">Hello, {{ session["username"] }}</h1>
+            {% if profile %}
+                <div class="user-info">
+                    <p>
+                        Skin tone:
+                        <span class="badge border text-dark" data-swatch-color="{{ profile['hex_value'] }}">{{ profile["label"] }}</span>
+                    </p>
+                    <p>Skin sensitivity: {{ profile["sensitivity_type"] }}</p>
+                </div>
+                <div class="info">
+                    <h2 class="h5 mt-5 mb-3">Update your skin profile</h2>
+                    <script>
+                        document.querySelectorAll("[data-swatch-color]").forEach((el) => {
+                            el.style.backgroundColor = el.dataset.swatchColor;
+                        });
+                    </script>
+                </div>
+
+            {% else %}
+                <h2 class="h5 index mb-3">Set up your skin profile</h2>
+            {% endif %}
+
+            <p class="text-muted index">Choose how you'd like to find your skin tone.</p>
+
+            <div class="row g-3 justify-content-center">
+                <div class="col-md-4">
+                    <a class="card index h-100 text-decoration-none text-reset" href="/setup?method=upload">
+                        <div class="card-body-index">
+                            <h3 class="h5 card-title">Upload an image</h3>
+                            <img class="icons" src="static/images/graphics/upload.png">
+                            <p class="card-text index text-muted">Pick a photo and we'll detect your tone automatically.</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a class="card index h-100 text-decoration-none text-reset" href="/setup?method=selfie">
+                        <div class="card-body-index">
+                            <h3 class="h5 card-title">Take a selfie</h3>
+                            <img class="icons" src="static/images/graphics/selfie.png">
+                            <p class="card-text index text-muted">Use your camera and we'll detect your tone automatically.</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a class="card index h-100 text-decoration-none text-reset" href="/setup?method=hex">
+                        <div class="card-body-index">
+                            <h3 class="h5 card-title">Choose your tone</h3>
+                            <img class="icons" src="static/images/graphics/tones.png">
+                            <p class="card-text index text-muted">Already know your Monk Skin Tone? Pick it directly.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

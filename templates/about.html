@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    About
+{% endblock %}
+
+{% block main %}
+    <div class="about-page">
+        <div class="container">
+            <article class="about-article">
+                <h1 class="h2 about mb-1">The One Place To Shop Your Tone.</h1>
+                <p class="lead">
+                    Every shade. Every shelf. Finally in one place.
+                    Huey is built around one idea: your skin tone shouldn't be something you re-explain to every brand you buy from.
+                    Build your profile once, and find what actually matches, not what's close enough, everywhere you shop.
+                </p>
+
+                <h2 class="h4 mt-4">Two steps. Used everywhere.</h2>
+                <h2 class="h5 mt-1">1. Build your profile once</h2>
+                <p>
+                    Upload a photo or take a selfie. We find your face, correct the colours for the lighting
+                    in the photo, and measure the colour of your skin on. We then
+                    match that colour to the nearest tones on the Monk Skin Tone scale and suggest the closest one.
+                </p>
+                <h2 class="h5 mt-1">2. Get matched everywhere</h2>
+                <p>
+                    Browse by category and see products actually suited to you, ranked against your profile instead of a generic, one-size-fits-most list.
+                    Huey matches and curates. It doesn't diagnose, and it doesn't manufacture. We're not a medical device or a clinical tool,
+                    and nothing here is a substitute for advice from a licensed dermatologist or physician.
+                    Built on open standards, not guesswork
+                </p>
+
+
+                <h2 class="h4 mt-4">The Monk Skin Tone scale</h2>
+                <p>
+                    Tone matching is built on the Monk Skin Tone Scale, a public, ten-point scale developed by Harvard sociologist Dr.
+                    Ellis Monk with Google, now used across Google Search, Photos, and Pixel's Real Tone work, and adopted by
+                    Medtronic to make clinical device testing more inclusive. Sensitivity guidance is informed by Fitzpatrick phototyping,
+                    the long-standing dermatological framework for sun/ingredient reactivity. We didn't invent a scale in a vacuum — we
+                    built on ones with real, public credibility.
+                    <a href="https://skintone.google" rel="noopener" target="_blank">Learn more about the MST scale</a>.
+                </p>
+
+                <h2 class="h4 mt-4">Your privacy</h2>
+                <p>
+                    <strong>Your photo is never stored.</strong> When you use the photo option, your image is
+                    sent securely to our server, analyzed in memory, and discarded as soon as the result is
+                    returned. It is not saved, logged or shared, and it is never used to train anything.
+                </p>
+                <p>What we do keep, so your profile works:</p>
+                <ul>
+                    <li>Your account details: username, email address, and a securely hashed password.</li>
+                    <li>Your chosen Monk Skin Tone and the colour measured from your photo, if you used one.</li>
+                    <li>Your answer to how reactive your skin is to the sun.</li>
+                </ul>
+                <p>
+                    We use this only tomatch products to your skin tone.
+                    We don't sell it or share it with advertisers. To delete your profile and everything in it, delete it from your account page email us at hello@huey-ai.com.
+                </p>
+
+                <h2 class="h4 mt-4">Limitations</h2>
+                <p>
+                    Measuring skin tone from a photo is an estimate. Lighting, camera settings, beauty filters,
+                    makeup and even your screen can all shift the result, which is why you can always adjust it.
+                    For the most accurate result, use daylight, face the camera, and skip filters.
+                </p>
+                <p>
+                    Huey isn't a medical tool. Your sun sensitivity answer is your own description,
+                    not a medical assessment, so please talk to a doctor or dermatologist about anything
+                    related to your skin's health.
+                </p>
+
+                <h2 class="h4 mt-4">Credits</h2>
+                <p>
+                    Skin tone scale by Dr. Ellis Monk and Google. Face detection by
+                    <a href="https://ai.google.dev/edge/mediapipe" rel="noopener" target="_blank">MediaPipe</a>.
+                    Credit the photos used on the site, e.g. "Gallery photos by … via Unsplash."]
+                </p>
+
+                <h2 class="h4 mt-4">Who made this</h2>
+                <p>
+                    Huey was built by Doshi Matoshi.
+                    Questions, feedback or data requests: <a href="mailto:doshimatoshi@gmail.com">doshimatoshi@gmail.com</a>.
+                </p>
+            </article>
+        </div>
+    </div>
+{% endblock %}

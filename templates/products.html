@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Products
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="matches-page">
+            {% include "search_bar.html" %}
+
+            <div class="page-info">
+                {% if q %}
+                    <h2 class="mb-1">Results for &ldquo;{{ q }}&rdquo;</h2>
+                    <p class="mb-1"><a href="/matches">Clear search</a></p>
+                {% elif category %}
+                    <h2 class="mb-1 text-capitalize">{{ category }}</h2>
+                    <p class="mb-1"><a href="/matches">Clear filter</a></p>
+                {% else %}
+                    <h2 class="mb-1">Products</h2>
+                {% endif %}
+                {% if mst_value is not none %}
+                    <p class="text-muted mb-5">Showing products for your tone (MST {{ mst_value }}).</p>
+                {% else %}
+                    <div class="mb-5"></div>
+                {% endif %}
+            </div>
+
+            {% if products %}
+                <div class="row g-3 justify-content-left">
+                    {% for product in products %}
+                        {% include "product_card.html" %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if q %}
+                    <p class="text-muted">No products match &ldquo;{{ q }}&rdquo;. Try a different word.</p>
+                {% else %}
+                    <p class="text-muted">No products yet &mdash; check back soon.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

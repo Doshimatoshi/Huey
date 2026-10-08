@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    signup
+{% endblock %}
+
+{% block main %}
+    <div class="signup-page">
+        <div class="signup-img">
+            <img alt="Logo" src="/static/images/graphics/mst-scale.jpg">
+        </div>
+        <div class="signup-form">
+            <form action="/signup" method="post">
+                <div class="mb-3">
+                    <input autocomplete="off" autofocus class="form-control w-100" name="username" placeholder="Username" type="text">
+                </div>
+                <div class="mb-3">
+                    <input autocomplete="off" class="form-control w-100" name="email" placeholder="Email" type="email">
+                </div>
+                <div class="mb-3">
+                    <input class="form-control w-100" name="password" placeholder="Password" type="password">
+                </div>
+                <div class="mb-3">
+                    <input class="form-control w-100" name="confirmation" placeholder="Confirmation" type="password">
+                </div>
+                <button class="btn btn-primary" type="submit">Sign Up</button>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

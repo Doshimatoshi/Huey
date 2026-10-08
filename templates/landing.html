@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main_class %}py-5{% endblock %}
+
+{% block main %}
+    <div class="landing-page">
+        <div class="landing-copy">
+            <h1 class="display-5 mb-4">The One Place To Shop Your Tone</h1>
+            <p class="lead text-muted">
+                Every shade. Every shelf. Finally in one place.
+            </p>
+            <div class="d-flex gap-2 mt-4">
+                <a class="btn btn-primary btn-lg" href="/signup">Get Started</a>
+                <a class="btn btn-outline-secondary btn-lg" href="/products">Explore Products</a>
+            </div>
+        </div>
+        {% set left_images = [
+            "Foundation.jpg", "Bandaids.jpg", "Crayons.jpg",
+            "Hoisery.jpg", "Prosthetics.jpg", "Dolls and toys.jpg"
+        ] %}
+        {% set right_images = [
+            "Sunscreen.jpg", "Hearing aids.jpg", "Socks.jpg",
+            "Underwear.jpg", "Ballet flats.jpg", "Mannequins.jpg",
+        ] %}
+        <div aria-hidden="true" class="landing-gallery">
+            <div class="gallery-col gallery-col-up">
+                {% for image in left_images + left_images %}
+                    <div class="gallery-card" style="background-image: url('/static/images/landing/{{ image }}')">
+                        <span class="gallery-card-label">{{ image.rsplit(".", 1)[0] }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="gallery-col gallery-col-down">
+                {% for image in right_images + right_images %}
+                    <div class="gallery-card" style="background-image: url('/static/images/landing/{{ image }}')">
+                        <span class="gallery-card-label">{{ image.rsplit(".", 1)[0] }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
