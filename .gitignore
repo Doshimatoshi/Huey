@@ -1,1 +1,5 @@
-*.db-journal
+venv/
+__pycache__/
+*.db
+.env
+flask_session/
