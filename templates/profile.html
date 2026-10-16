@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block main_class %}{% endblock %}
+
+{% block main %}
+    <div id="index-home">
+        <div class="container profile-page">
+            <h1 class="mb-4" id="welcome">Hello, {{ session["username"] }}</h1>
+
+            {# Current result #}
+            <section class="profile-section">
+                {% if profile %}
+                    <div class="tone-summary">
+                        <span class="tone-swatch" style="background-color: {{ profile['hex_value'] }}"></span>
+                        <div>
+                            <h2 class="h5 mb-1">Your tone: {{ profile["mst_value"] }} of 10</h2>
+                            <p class="text-muted mb-0">
+                                {% if profile["confidence"] %}
+                                    Read from your photo with {{ profile["confidence"] }} confidence.
+                                {% else %}
+                                    Chosen by you.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if neighbours %}
+                        <form action="/profile" class="mt-3" method="post">
+                            <p class="mb-2">Not quite right? Try a neighbouring tone:</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for tone in neighbours %}
+                                    <button class="btn btn-outline-secondary d-flex align-items-center gap-2" name="mst_value" type="submit" value="{{ tone['id'] }}">
+                                        <span class="mst-swatch" style="background-color: {{ tone['hex_value'] }}"></span>
+                                        Tone {{ tone["id"] }}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </form>
+                    {% endif %}
+
+                    <p class="mt-3 mb-0"><a class="btn btn-primary" href="/matches">Shop your matches</a></p>
+                {% else %}
+                    <h2 class="h5 mb-1">Set up your skin profile</h2>
+                    <p class="text-muted mb-0">Find your tone below and we'll show you products made for it.</p>
+                {% endif %}
+            </section>
+
+            {# Retake, upload or pick #}
+            <section class="profile-section" id="find-tone">
+                <h2 class="h5 mb-1">{{ "Update your tone" if profile else "Find your tone" }}</h2>
+                <p class="text-muted mb-3">
+                    {% if profile %}
+                        Your current tone stays saved until you confirm a new one.
+                    {% else %}
+                        Choose how you'd like to find your skin tone.
+                    {% endif %}
+                </p>
+                <div class="row g-3 justify-content-center">
+                    <div class="col-md-4">
+                        <a class="card index h-100 text-decoration-none text-reset" href="/setup?method=upload">
+                            <div class="card-body-index">
+                                <h3 class="h5 card-title">Upload an image</h3>
+                                <img alt="" class="icons" src="/static/images/graphics/upload.png">
+                                <p class="card-text index text-muted">Pick a photo and we'll detect your tone automatically.</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="card index h-100 text-decoration-none text-reset" href="/setup?method=selfie">
+                            <div class="card-body-index">
+                                <h3 class="h5 card-title">{{ "Retake selfie" if profile else "Take a selfie" }}</h3>
+                                <img alt="" class="icons" src="/static/images/graphics/selfie.png">
+                                <p class="card-text index text-muted">Use your camera and we'll detect your tone automatically.</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="card index h-100 text-decoration-none text-reset" href="/setup?method=hex">
+                            <div class="card-body-index">
+                                <h3 class="h5 card-title">Choose your tone</h3>
+                                <img alt="" class="icons" src="/static/images/graphics/tones.png">
+                                <p class="card-text index text-muted">Already know your Monk Skin Tone? Pick it directly.</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% if not profile %}
+                    <p class="mt-3 mb-0 small"><a href="/products">Browse all products without a tone</a></p>
+                {% endif %}
+            </section>
+
+            {# Sensitivity (set together with the first tone) #}
+            {% if profile %}
+                <section class="profile-section">
+                    <h2 class="h5 mb-1">Sun sensitivity</h2>
+                    <p class="text-muted mb-3">How reactive your skin is to the sun. We use this to curate your matches.</p>
+                    <form action="/profile" class="d-flex flex-wrap gap-2" method="post">
+                        <select aria-label="Sun sensitivity" class="form-select w-auto" name="sensitivity">
+                            {% for level in ["low", "moderate", "high"] %}
+                                <option value="{{ level }}" {{ "selected" if profile["sensitivity_type"] == level }}>{{ level | capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-secondary" type="submit">Save</button>
+                    </form>
+                </section>
+            {% endif %}
+
+            {# Account #}
+            <section class="profile-section">
+                <h2 class="h5 mb-3">Account</h2>
+                <p class="mb-0"><a href="/change_password">Change password</a></p>
+            </section>
+
+            {# Privacy #}
+            <section class="profile-section">
+                <h2 class="h5 mb-1">Privacy</h2>
+                <p class="text-muted">
+                    Your photo is never stored. It's analysed in memory and discarded as soon as your tone is returned.
+                    We keep only your account details, your tone and your sensitivity. <a href="/about">More about your privacy</a>
+                </p>
+                <form action="/delete_account" class="d-flex flex-wrap gap-2" method="post">
+                    <input aria-label="Password" autocomplete="current-password" class="form-control w-auto" name="password" placeholder="Password" required type="password">
+                    <button class="btn btn-outline-danger" type="submit">Delete account</button>
+                </form>
+                <p class="text-muted small mt-2 mb-0">This permanently deletes your account and skin profile. Enter your password to confirm.</p>
+            </section>
+        </div>
+    </div>
+{% endblock %}

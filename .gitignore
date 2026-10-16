@@ -3,3 +3,4 @@ __pycache__/
 *.db
 .env
 flask_session/
+.DS_Store

@@ -26,15 +26,31 @@
                 <p class="text-muted mb-5">No categories yet — check back soon.</p>
             {% endif %}
 
-            <div class="page-info">
-                <h2 class="h5 mb-1">Matches for {{ profile["label"] }}</h2>
-                <p class="text-muted mb-5">Curated for your tone and {{ profile["sensitivity_type"] }} sensitivity.</p>
+            <div class="page-info tone-summary mb-5">
+                <span class="tone-swatch" style="background-color: {{ profile['hex_value'] }}"></span>
+                <div>
+                    <h2 class="h5 mb-1">Your tone: {{ profile["mst_value"] }} of 10</h2>
+                    <p class="text-muted mb-1">
+                        {% if profile["confidence"] %}
+                            Read from your photo with {{ profile["confidence"] }} confidence.
+                            {% if profile["confidence"] == "low" %}Worth a quick check.{% endif %}
+                        {% else %}
+                            Chosen by you.
+                        {% endif %}
+                        Products below are curated for this tone and {{ profile["sensitivity_type"] }} sensitivity.
+                    </p>
+                    <p class="small mb-0">
+                        <a href="/profile">Adjust tone</a>
+                        <span class="text-muted mx-1">&middot;</span>
+                        <a href="/profile#find-tone">Retake photo</a>
+                    </p>
+                </div>
             </div>
 
 
-            <h2 class="h5 mb-3">Picked for you</h2>
+            <h2 class="h5 mb-3 text-start">Top matches in your tone</h2>
             {% if products %}
-                <div class="row g-3 justify-content-left">
+                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
                     {% for product in products %}
                         {% include "product_card.html" %}
                     {% endfor %}

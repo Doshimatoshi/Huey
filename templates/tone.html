@@ -6,6 +6,12 @@
 
 {% block main %}
     <div class="tone-setup">
+        {% if profile %}
+            <p class="text-muted mb-4">
+                <span class="mst-swatch align-middle me-1" style="background-color: {{ profile['hex_value'] }}"></span>
+                Your saved tone is {{ profile["mst_value"] }} of 10. It stays until you save a new one.
+            </p>
+        {% endif %}
         <form action="/setup" data-method="{{ method }}" method="post">
             {% if method == "hex" %}
                 <h1 class="h3 mb-1">Choose your Monk Skin Tone</h1>
@@ -77,6 +83,7 @@
 
                 <input id="mst-value" name="mst_value" type="hidden">
                 <input id="hex-value" name="hex" type="hidden">
+                <input id="confidence" name="confidence" type="hidden">
             {% endif %}
 
             <div class="mb-3">
@@ -86,15 +93,15 @@
 
             <div class="mb-3">
                 <select class="form-select mx-auto w-auto" name="sensitivity" required>
-                    <option disabled selected value="">How reactive is your skin to the sun?</option>
-                    <option value="low">Low</option>
-                    <option value="moderate">Moderate</option>
-                    <option value="high">High</option>
+                    <option disabled {{ "selected" if not profile }} value="">How reactive is your skin to the sun?</option>
+                    {% for level in ["low", "moderate", "high"] %}
+                        <option value="{{ level }}" {{ "selected" if profile and profile["sensitivity_type"] == level }}>{{ level | capitalize }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
-            <button class="btn btn-primary" id="submit" type="submit">Save profile</button>
-            <a class="btn btn-link" href="/">Cancel</a>
+            <button class="btn btn-primary" id="submit" type="submit">{{ "Save new tone" if profile else "Save profile" }}</button>
+            <a class="btn btn-link" href="/profile">Cancel</a>
         </form>
     </div>
 {% endblock %}

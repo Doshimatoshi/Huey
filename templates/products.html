@@ -12,22 +12,30 @@
             <div class="page-info">
                 {% if q %}
                     <h2 class="mb-1">Results for &ldquo;{{ q }}&rdquo;</h2>
-                    <p class="mb-1"><a href="/matches">Clear search</a></p>
+                    <p class="mb-1"><a href="{{ '/matches' if mst_value is not none else '/products' }}">Clear search</a></p>
                 {% elif category %}
                     <h2 class="mb-1 text-capitalize">{{ category }}</h2>
-                    <p class="mb-1"><a href="/matches">Clear filter</a></p>
+                    <p class="mb-1"><a href="{{ '/matches' if mst_value is not none else '/products' }}">Clear filter</a></p>
                 {% else %}
                     <h2 class="mb-1">Products</h2>
                 {% endif %}
                 {% if mst_value is not none %}
-                    <p class="text-muted mb-5">Showing products for your tone (MST {{ mst_value }}).</p>
+                    <p class="text-muted mb-5">Showing products for your tone ({{ mst_value }} of 10).</p>
                 {% else %}
-                    <div class="mb-5"></div>
+                    {# Make it obvious these results aren't personalised #}
+                    <div class="alert alert-secondary mt-3 mb-5" role="status">
+                        Showing all products. These aren't matched to your skin tone.
+                        {% if session["user_id"] %}
+                            <a href="/profile">Set your tone</a> to see your matches.
+                        {% else %}
+                            <a href="/signup">Sign up</a> to see products matched to your tone.
+                        {% endif %}
+                    </div>
                 {% endif %}
             </div>
 
             {% if products %}
-                <div class="row g-3 justify-content-left">
+                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
                     {% for product in products %}
                         {% include "product_card.html" %}
                     {% endfor %}

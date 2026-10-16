@@ -19,32 +19,39 @@
     </head>
 
     <body>
-
+        {# Nav and content fill at least the first screen; the footer starts below it #}
+        <div class="page-wrap">
         <nav class="bg-light border navbar navbar-expand-md navbar-light">
-            <div class="container">
-                <a class="navbar-brand" href="/">Huey</a>
-                <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbar">
-                    {% if session["user_id"] %}
-                        <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/matches">Matches</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-                        </ul>
-                        <ul class="navbar-nav ms-auto mt-2">
-                            <li class="nav-item"><a class="nav-link">{{ session["username"] }}</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/change_password">Change Password</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
-                        </ul>
-                    {% else %}
-                        <ul class="navbar-nav ms-auto mt-2" id="btn-gap">
-                            <a class="btn btn-primary" href="/login">Log In</a>
-                            <a class="btn btn-outline-primary" href="/signup">Sign Up</a>
-
-                        </ul>
-                    {% endif %}
-                </div>
+            <a class="navbar-brand" href="/">Huey</a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                {% if session["user_id"] %}
+                    <ul class="navbar-nav me-auto mt-2">
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint in ('matches', 'products') }}" href="/matches">Shop</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mt-2">
+                        <li class="nav-item">
+                            <a class="nav-link {{ 'active' if request.endpoint == 'profile' }}" href="/profile">{{ session["username"] }}</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ms-auto mt-2" id="btn-gap">
+                        {# On the auth pages, show only the button for the other page #}
+                        {% if request.endpoint != "login" %}
+                            <li class="nav-item">
+                                <a class="btn {{ 'btn-outline-primary' if request.endpoint == 'signup' else 'btn-primary' }}" href="/login">Log In</a>
+                            </li>
+                        {% endif %}
+                        {% if request.endpoint != "signup" %}
+                            <li class="nav-item"><a class="btn btn-outline-primary" href="/signup">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
             </div>
         </nav>
 
@@ -59,6 +66,14 @@
         <main class="{% block main_class %}container-fluid text-center{% endblock %}">
             {% block main %}{% endblock %}
         </main>
+        </div>
+
+        {# About lives here so the signed-in nav stays at three items #}
+        <footer class="site-footer">
+            <a href="/about">About Huey</a>
+            <span class="mx-2" aria-hidden="true">&middot;</span>
+            <a href="/contact">Contact</a>
+        </footer>
 
         {% block scripts %}{% endblock %}
 

@@ -46,6 +46,7 @@ if (METHOD === "hex") {
     const stage = document.getElementById("stage");
     const marker = document.getElementById("ref-marker");
     const hexValue = document.getElementById("hex-value");
+    const confidenceValue = document.getElementById("confidence");
     const photoActions = document.getElementById("photo-actions");
     const pickRef = document.getElementById("pick-ref");
     const clearRef = document.getElementById("clear-ref");
@@ -58,6 +59,7 @@ if (METHOD === "hex") {
 
     let busy = false;
     let picking = false;
+    let analysis = null;  // { mstId, confidence } of the latest photo analysis
     let reference = null; // {x, y} as 0–1 fractions of the photo
 
     function resetResult() {
@@ -133,6 +135,10 @@ if (METHOD === "hex") {
 
         mstValue.value = button.dataset.mstId;
         showColour(button.dataset.mstHex, button.dataset.mstLabel);
+
+        // The confidence describes the top match only; picking another tone overrides it
+        const keptTopMatch = analysis && String(analysis.mstId) === button.dataset.mstId;
+        confidenceValue.value = keptTopMatch ? analysis.confidence : "";
     }
 
     function canvasToBlob() {
@@ -161,6 +167,7 @@ if (METHOD === "hex") {
             if (!response.ok) throw new Error(result.error || "Couldn't analyze that photo. Try another one.");
 
             hexValue.value = result.measured_hex;
+            analysis = { mstId: result.mst_id, confidence: result.confidence };
             matchList.innerHTML = "";
             result.matches.forEach((match) => matchList.appendChild(buildMatchButton(match)));
             matchesBox.hidden = false;

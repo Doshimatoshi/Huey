@@ -6,11 +6,10 @@
 
 {% block main %}
     <div class="signup-page">
-        <div class="signup-img">
-            <img alt="Logo" src="/static/images/graphics/mst-scale.jpg">
-        </div>
         <div class="signup-form">
             <form action="/signup" method="post">
+                <h1 class="auth-wordmark">Huey</h1>
+                <h2>Find products that match your skin tone</h2>
                 <div class="mb-3">
                     <input autocomplete="off" autofocus class="form-control w-100" name="username" placeholder="Username" type="text">
                 </div>
@@ -21,10 +20,15 @@
                     <input class="form-control w-100" name="password" placeholder="Password" type="password">
                 </div>
                 <div class="mb-3">
-                    <input class="form-control w-100" name="confirmation" placeholder="Confirmation" type="password">
+                    <input class="form-control w-100" name="confirmation" placeholder="Confirm Password" type="password">
                 </div>
-                <button class="btn btn-primary" type="submit">Sign Up</button>
+                <button class="btn btn-primary" shadow-none type="submit">Sign Up</button>
+                <p class="signup-login">Already have an account? <a href="/login">Log in</a></p>
             </form>
+        </div>
+
+        <div class="signup-img">
+            <img alt="Logo" src="/static/images/graphics/mst-scale.jpg">
         </div>
 
     </div>

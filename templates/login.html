@@ -6,11 +6,11 @@
 
 {% block main %}
     <div class="login-page">
-        <div class="login-img">
-            <img alt="Logo" src="/static/images/graphics/mst_tone.jpg">
-        </div>
         <div class="login-form">
             <form action="/login" method="post">
+                <h1 class="auth-wordmark">Huey</h1>
+                <h2>Welcome back</h2>
+                <p class="login-intro">Log in to see products matched to your skin tone.</p>
                 <div class="mb-3">
                     <input autocomplete="off" autofocus class="form-control w-100" name="username" placeholder="Username" type="text">
                 </div>
@@ -18,7 +18,12 @@
                     <input class="form-control w-100" name="password" placeholder="Password" type="password">
                 </div>
                 <button class="btn btn-primary" type="submit">Log In</button>
+                <p class="login-signup">New to Huey? <a href="/signup">Sign up</a></p>
+                {# Forgot your password? (no reset route yet) #}
             </form>
+        </div>
+        <div class="login-img">
+            <img alt="Logo" src="/static/images/graphics/Kess.jpg">
         </div>
     </div>
 {% endblock %}

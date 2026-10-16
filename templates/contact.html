@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Contact
+{% endblock %}
+
+{% block main %}
+    <div class="signup-page contact-page">
+        <div class="signup-form">
+            <form action="/contact" method="post" novalidate>
+                <h1 class="auth-wordmark">Huey</h1>
+                <h2>Get in touch</h2>
+                <p class="contact-intro">
+                    Brands with products for every skin tone: we'd love to list them.
+                    Trouble with your account or tone result? Tell us and we'll help.
+                </p>
+
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <select aria-label="What's this about?" class="form-select w-100" id="reason" name="reason" required>
+                        <option disabled {{ "selected" if form.get("reason") not in reasons }} value="">What's this about?</option>
+                        {% for value, label in reasons.items() %}
+                            <option value="{{ value }}" {{ "selected" if form.get("reason") == value }}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <input aria-label="Your name" autocomplete="name" class="form-control w-100" name="name" placeholder="Your name" required type="text" value="{{ form.get('name', '') }}">
+                </div>
+                <div class="mb-3">
+                    <input aria-label="Email" autocomplete="email" class="form-control w-100" name="email" placeholder="Email" required type="email" value="{{ form.get('email', '') }}">
+                </div>
+
+                {# Only shown for brand enquiries #}
+                <div id="brand-fields">
+                    <div class="mb-3">
+                        <input aria-label="Brand name" autocomplete="organization" class="form-control w-100" name="company" placeholder="Brand name" type="text" value="{{ form.get('company', '') }}">
+                    </div>
+                    <div class="mb-3">
+                        <input aria-label="Website (optional)" autocomplete="url" class="form-control w-100" name="website" placeholder="Website (optional)" type="url" value="{{ form.get('website', '') }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <textarea aria-describedby="message-hint" aria-label="Message" class="form-control w-100" maxlength="5000" name="message" placeholder="Message" required rows="5">{{ form.get('message', '') }}</textarea>
+                    <div class="contact-hint" id="message-hint"></div>
+                </div>
+
+                {# Honeypot: hidden from people, filled in by spam bots #}
+                <div aria-hidden="true" class="contact-honeypot">
+                    <label for="nickname">Leave this empty</label>
+                    <input autocomplete="off" id="nickname" name="nickname" tabindex="-1" type="text">
+                </div>
+
+                <button class="btn btn-primary" type="submit">Send message</button>
+                <p class="signup-login">Prefer email? <a href="mailto:hello@huey-ai.com">hello@huey-ai.com</a></p>
+            </form>
+        </div>
+
+        <div class="signup-img">
+            <img alt="" src="/static/images/graphics/Socks.jpg">
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // Show the brand fields and a fitting hint only for the chosen topic
+        const reason = document.getElementById("reason");
+        const brandFields = document.getElementById("brand-fields");
+        const hint = document.getElementById("message-hint");
+        const hints = {
+            brand: "Tell us what you make, the shade range, and where it's sold.",
+            help: "Tell us what happened and what you expected. Please don't include your password.",
+            other: "",
+        };
+
+        function update() {
+            brandFields.hidden = reason.value !== "brand";
+            hint.textContent = hints[reason.value] || "";
+        }
+
+        reason.addEventListener("change", update);
+        update();
+    </script>
+{% endblock %}

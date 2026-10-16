@@ -1,3 +1,14 @@
+/* Keep nav items off the screen edges now that there's no .container */
+nav.navbar {
+    padding-inline: 2rem;
+}
+
+@media (max-width: 768px) {
+    nav.navbar {
+        padding-inline: 1rem;
+    }
+}
+
 /* Size for brand */
 nav .navbar-brand
 {
@@ -34,10 +45,15 @@ p {
     text-align: left;
 }
 
-body {
+/* Nav, flash message and main; main stretches so the footer sits below the first screen */
+.page-wrap {
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
+}
+
+.page-wrap > main {
+    flex: 1 0 auto;
 }
 
 
@@ -83,6 +99,16 @@ body {
 .btn-primary {
     background-color: #323232;
     color: white;
+    border: none;
+}
+
+/* Bootstrap draws the border and focus ring from these variables in every state */
+.btn.landing {
+    --bs-btn-border-width: 0;
+    --bs-btn-focus-box-shadow: none;
+    --bs-btn-hover-bg: #323232;
+    --bs-btn-active-bg: #323232;
+    border: none;
 }
 
 .landing-gallery {
@@ -181,18 +207,35 @@ body {
     }
 }
 
-@media (max-width: 764px) {
+@media (max-width: 768px) {
     .landing-page {
         flex-direction: column;
         text-align: center;
+    }
+
+    .landing-copy {
+        flex: none;
+        text-align: center;
+    }
+
+    .landing-copy h1 {
+        width: 100%;
+        font-size: 2rem;
     }
 
     .landing-copy p {
         text-align: center;
     }
 
+    .landing-copy .d-flex {
+        justify-content: center;
+    }
+
     .landing-gallery {
-        display: none;
+        order: -1;
+        flex: none;
+        width: 100%;
+        height: 45vh;
     }
 }
 
@@ -210,27 +253,27 @@ main:has(.login-page) {
     flex: 1;
     width: 100%;
     text-align: left;
+    background-color: RGB(44,94,52);
 }
 
+/* A 50% basis includes padding, so the padded form side can't grow wider */
 .login-img,
 .login-form {
-    flex: 1 1 0;
+    flex: 0 0 50%;
     min-width: 0;
 }
 
 .login-img {
-    display: flex;
+    position: relative;
     background-color: #C9A071;
-    flex-direction: column;
-    padding: 5vh;
-    align-items: center;
-    gap: 50px;
-    text-align: left;
 }
 
+/* Fill the whole right half, cropping rather than stretching */
 .login-img img {
-    display: block;
-    width: 90%;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
@@ -245,6 +288,47 @@ main:has(.login-page) {
 .login-form form {
     width: 100%;
     max-width: 320px;
+}
+
+/* "Huey" wordmark above the login and signup forms */
+.auth-wordmark {
+    margin-bottom: 2rem;
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.login-form h2 {
+    margin-bottom: 0.5rem;
+}
+
+.login-form h2,
+.login-intro,
+.login-signup,
+.login-signup a {
+    color: #fff;
+}
+
+.login-intro {
+    margin-bottom: 2.5rem;
+}
+
+.login-signup {
+    margin: 2rem 0 0;
+}
+
+.login-signup a {
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .login-img {
+        display: none;
+    }
+
+    .login-form {
+        flex-basis: 100%;
+    }
 }
 
 
@@ -262,28 +346,26 @@ main:has(.signup-page) {
     flex: 1;
     width: 100%;
     text-align: left;
+    background-color: RGB(44,94,52);
 }
 
+/* A 50% basis includes padding, so the padded form side can't grow wider */
 .signup-img,
 .signup-form {
-    flex: 1 1 0;
+    flex: 0 0 50%;
     min-width: 0;
 }
 
 .signup-img {
-    display: flex;
-    background-color: #C9A071;
-    flex-direction: column;
-    padding: 5vh;
-    align-items: center;
-    gap: 50px;
-    text-align: left;
+    position: relative;
 }
 
-
+/* Fill the whole right half, cropping rather than stretching */
 .signup-img img {
-    display: block;
-    width: 90%;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
@@ -300,6 +382,34 @@ main:has(.signup-page) {
     max-width: 320px;
 }
 
+.signup-form h2 {
+    margin-bottom: 2.5rem;
+    color: #fff;
+}
+
+.signup-login,
+.signup-login a {
+    color: #fff;
+}
+
+.signup-login {
+    margin: 2rem 0 0;
+}
+
+.signup-login a {
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .signup-img {
+        display: none;
+    }
+
+    .signup-form {
+        flex-basis: 100%;
+    }
+}
+
 
 /* Matches page */
 .matches-page{
@@ -308,6 +418,21 @@ main:has(.signup-page) {
 .page-info,
 .page-info p{
     text-align: left;
+}
+
+/* Swatch of the user's MST tone beside the tone summary */
+.tone-summary {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tone-swatch {
+    flex: 0 0 auto;
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 50%;
 }
 
 
@@ -391,7 +516,6 @@ main:has(.signup-page) {
 }
 
 .card.product {
-    aspect-ratio: 300/400;
     border: none;
     box-shadow: 0 0;
     border-radius: 20px;
@@ -451,6 +575,73 @@ main:has(.signup-page) {
 
 .card-text.index, .text-muted.index, .h5.index{
     text-align: center;
+}
+
+
+.site-footer {
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.site-footer a {
+    color: inherit;
+}
+
+
+/* Contact page: uses the signup page layout, with a slightly wider form for the message */
+.signup-page.contact-page {
+    background-color: RGB(252, 172, 20);
+}
+
+/* Dark text: white on this orange is only about 1.9:1 contrast */
+.contact-page .auth-wordmark,
+.contact-page .signup-form h2,
+.contact-page .signup-login,
+.contact-page .signup-login a {
+    color: #1a1a1a;
+}
+
+.contact-page .signup-form form {
+    max-width: 400px;
+}
+
+.contact-page .signup-form h2 {
+    margin-bottom: 1rem;
+}
+
+.contact-intro {
+    margin-bottom: 2rem;
+    color: rgba(26, 26, 26, 0.85);
+}
+
+.contact-hint {
+    margin-top: 0.25rem;
+    color: rgba(26, 26, 26, 0.8);
+    font-size: 0.875rem;
+}
+
+/* Off-screen rather than display: none, which some bots skip */
+.contact-honeypot {
+    position: absolute;
+    left: -9999px;
+}
+
+
+/* Profile page: stacked sections on the index-home background */
+.profile-page {
+    max-width: 960px;
+    padding-bottom: 3rem;
+    text-align: left;
+}
+
+.profile-section {
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.profile-section:last-child {
+    border-bottom: none;
 }
 
 
