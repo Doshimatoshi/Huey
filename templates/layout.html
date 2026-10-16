@@ -14,7 +14,8 @@
         <link href="/static/favicon.ico?v=2" rel="icon" type="image/png">
         <link href="/static/style.css" rel="stylesheet">
 
-        <title>Huey: {% block title %}{% endblock %}</title>
+        {# trim drops the whitespace around each page's title block #}
+        <title>Huey | {% filter trim %}{% block title %}{% endblock %}{% endfilter %}</title>
 
     </head>
 

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Home
+    Shop products that match your skin tone
 {% endblock %}
 
 {% block main_class %}py-5{% endblock %}
@@ -17,29 +17,37 @@
                 <a class="landing btn btn-primary btn-lg" href="/signup">Get Started</a>
             </div>
         </div>
-        {% set left_images = [
-            "Foundation.jpg", "Bandaids.jpg", "Crayons.jpg",
-            "Hoisery.jpg", "Prosthetics.jpg", "Dolls and toys.jpg"
+        {# (image, label shown, product category it leads to; None if we have no products for it yet) #}
+        {% set left_cards = [
+            ("Foundation.jpg", "Foundation", "foundation"),
+            ("Bandaids.jpg", "Bandages", "bandages"),
+            ("Crayons.jpg", "Art supplies", "art supplies"),
+            ("Hosiery.jpg", "Hosiery", "hosiery"),
+            ("Prosthetics.jpg", "Prosthetics", None),
+            ("Dolls and toys.jpg", "Dolls and toys", None),
         ] %}
-        {% set right_images = [
-            "Sunscreen.jpg", "Hearing aids.jpg", "Socks.jpg",
-            "Underwear.jpg", "Ballet flats.jpg", "Mannequins.jpg",
+        {% set right_cards = [
+            ("Sunscreen.jpg", "Tinted sunscreen", "tinted sunscreen"),
+            ("Hearing aids.jpg", "Hearing aids", "hearing aids"),
+            ("Socks.jpg", "Socks", "hosiery"),
+            ("Underwear.jpg", "Underwear", "underwear"),
+            ("Ballet flats.jpg", "Ballet flats", None),
+            ("Mannequins.jpg", "Mannequins", None),
         ] %}
+        {# Each column repeats its cards so the scroll animation loops seamlessly #}
         <div aria-hidden="true" class="landing-gallery">
-            <div class="gallery-col gallery-col-up">
-                {% for image in left_images + left_images %}
-                    <div class="gallery-card" style="background-image: url('/static/images/landing/{{ image }}')">
-                        <span class="gallery-card-label">{{ image.rsplit(".", 1)[0] }}</span>
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="gallery-col gallery-col-down">
-                {% for image in right_images + right_images %}
-                    <div class="gallery-card" style="background-image: url('/static/images/landing/{{ image }}')">
-                        <span class="gallery-card-label">{{ image.rsplit(".", 1)[0] }}</span>
-                    </div>
-                {% endfor %}
-            </div>
+            {% for cards, direction in [(left_cards, "up"), (right_cards, "down")] %}
+                <div class="gallery-col gallery-col-{{ direction }}">
+                    {% for image, label, category in cards + cards %}
+                        <div class="gallery-card" style="background-image: url('/static/images/landing/{{ image }}')">
+                            {% if category not in categories %}
+                                <span class="gallery-card-soon">Coming soon</span>
+                            {% endif %}
+                            <span class="gallery-card-label">{{ label }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

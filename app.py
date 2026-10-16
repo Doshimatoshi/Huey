@@ -75,7 +75,9 @@ def home_for(user_id):
 def index():
     """Show the landing page to signed-out visitors; send everyone else home"""
     if not session.get("user_id"):
-        return render_template("landing.html")
+        # Gallery cards for categories without products yet are marked "Coming soon"
+        categories = {row["category"] for row in db.execute("SELECT DISTINCT category FROM products")}
+        return render_template("landing.html", categories=categories)
     return redirect(home_for(session["user_id"]))
 
 @app.route("/products")
