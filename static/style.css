@@ -979,13 +979,30 @@ main:has(.survey-page) {
 
 
 /* About page */
+/* Same colours as the questionnaire: dark page, near-white text, green accent */
 .about-page{
     min-width: 100vw;
     min-height: 100vh;
     overflow: hidden;
     align-content: top;
-    background-color: RGB(20,20,20);
-    color: RGB(222,222,222);
+    background-color: rgb(26, 26, 26);
+    color: #f2f2f2;
+}
+
+main:has(.about-page) {
+    background-color: rgb(26, 26, 26);
+}
+
+.about-article a {
+    color: rgb(168, 214, 142);
+}
+
+.about-article a:hover {
+    color: rgb(148, 198, 120);
+}
+
+.about-article strong {
+    color: #f2f2f2;
 }
 .about-article {
     display: flex;
@@ -999,7 +1016,7 @@ main:has(.survey-page) {
 .about-article p,
 .about-article ul {
     text-align: left;
-    color: RGB(170,170,170);
+    color: rgba(242, 242, 242, 0.65);
 }
 
 .h2.about {
