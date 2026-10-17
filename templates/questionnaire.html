@@ -1,0 +1,167 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ "Thank you" if thanks else "Questionnaire" }}
+{% endblock %}
+
+{# Checkboxes (several answers) or radios (one answer), re-checked from answers after an error #}
+{% macro choices(name, type="checkbox") %}
+    {% for value, label in options[name] %}
+        <div class="form-check">
+            <input {{ "checked" if value in answers.getlist(name) }} class="form-check-input" id="{{ name }}-{{ value }}" name="{{ name }}" type="{{ type }}" value="{{ value }}">
+            <label class="form-check-label" for="{{ name }}-{{ value }}">{{ label }}</label>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro text(name, label, rows=0, type="text") %}
+    <label class="form-label survey-sublabel" for="{{ name }}">{{ label }}</label>
+    {% if rows %}
+        <textarea class="form-control" id="{{ name }}" maxlength="2000" name="{{ name }}" rows="{{ rows }}">{{ answers.get(name, "") }}</textarea>
+    {% else %}
+        <input class="form-control" id="{{ name }}" maxlength="2000" name="{{ name }}" type="{{ type }}" value="{{ answers.get(name, '') }}">
+    {% endif %}
+{% endmacro %}
+
+{% block main %}
+    <div class="container survey-page">
+        {% if thanks %}
+            <div class="survey-thanks">
+                <h1 class="h2 mb-3">Thank you</h1>
+                <p>Your answers have been saved. They'll shape what we build next.</p>
+                <p><a class="btn btn-primary" href="/">Back to Huey</a></p>
+            </div>
+        {% else %}
+            {#
+                Without JavaScript this is one long form. survey.js turns each .survey-step into a screen
+                of its own, with a progress bar and Back / Next buttons.
+            #}
+            <div class="survey-progress" hidden>
+                <div class="survey-progress-bar"></div>
+            </div>
+            <p aria-live="polite" class="survey-count" hidden></p>
+
+            <form action="/questionnaire" class="survey-form" data-error-step="{{ error_step or '' }}" method="post">
+                <section class="survey-step survey-intro">
+                    <h1 class="h2 mb-2">Help us build Huey</h1>
+                    <p class="text-muted mb-4">
+                        A few questions about buying products where your skin tone matters. It takes about five minutes,
+                        and every question is optional. There are no right answers; we want to hear what actually happens.
+                    </p>
+                </section>
+
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endif %}
+
+                <fieldset class="survey-step survey-question" data-part="Your experience">
+                    <legend>1. In the last 12 months, have you bought something where the shade or skin tone mattered?</legend>
+                    <p class="survey-hint">Tick all that apply.</p>
+                    {{ choices("categories_bought") }}
+                    {{ text("categories_bought_other", "If other, what was it?") }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-part="Your experience">
+                    <legend>2. Think of the last time you bought one of those products. How did you choose the shade?</legend>
+                    {{ choices("shade_method", "radio") }}
+                    {{ text("shade_method_other", "If other, how?") }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-autoadvance data-part="Your experience">
+                    <legend>3. How often have you bought something in the wrong shade and had to return it, throw it away or not use it?</legend>
+                    {{ choices("wrong_shade", "radio") }}
+                </fieldset>
+
+                <div class="survey-step survey-question" data-part="Your experience">
+                    <label class="survey-legend" for="given_up">4. Are there products you've given up finding in your tone, or can only find in a few shades? Which ones?</label>
+                    <textarea class="form-control" id="given_up" maxlength="2000" name="given_up" rows="4">{{ answers.get("given_up", "") }}</textarea>
+                </div>
+
+                <fieldset class="survey-step survey-question" data-part="What you'd want from Huey" id="most-useful">
+                    <legend>5. Which of these would be most useful to you?</legend>
+                    <p class="survey-hint">Choose up to three.</p>
+                    {{ choices("most_useful") }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-part="What you'd want from Huey">
+                    <legend>6. Which categories would you want to see first?</legend>
+                    <p class="survey-hint">Tick all that apply.</p>
+                    {{ choices("categories_first") }}
+                    {{ text("categories_first_other", "If other, which?") }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-autoadvance data-part="What you'd want from Huey">
+                    <legend>7. How would you prefer to tell Huey your tone?</legend>
+                    {{ choices("tone_input", "radio") }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-part="What you'd want from Huey">
+                    <legend>8. How comfortable are you with using a photo of your face for this?</legend>
+                    {{ choices("photo_comfort", "radio") }}
+                    {{ text("photo_comfort_improve", "What would make you more comfortable?", rows=3) }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-part="Trust and buying">
+                    <legend>9. If a site said a product matched your tone, how much would you trust that?</legend>
+                    {{ choices("trust_level", "radio") }}
+                    <p class="survey-sublabel mt-3 mb-2">What would make you trust it more? Tick all that apply.</p>
+                    {{ choices("trust_boosters") }}
+                    {{ text("trust_other", "If other, what?") }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-part="Trust and buying">
+                    <legend>10. Where do you usually buy these products?</legend>
+                    <p class="survey-hint">Tick all that apply.</p>
+                    {{ choices("buy_where") }}
+                    {{ text("buy_where_other", "If other, where?") }}
+                    <p class="survey-sublabel mt-3 mb-2">Would you buy through a link from Huey?</p>
+                    {{ choices("buy_via_link", "radio") }}
+                </fieldset>
+
+                <div class="survey-step survey-question" data-part="To finish">
+                    <label class="survey-legend" for="wish">11. What's the one thing you'd like a site like this to do that no current site does?</label>
+                    <textarea class="form-control" id="wish" maxlength="2000" name="wish" rows="4">{{ answers.get("wish", "") }}</textarea>
+                </div>
+
+                <fieldset class="survey-step survey-question" data-part="To finish">
+                    <legend>12. About you (optional)</legend>
+                    <p class="survey-hint">
+                        We ask so we can check whether Huey works for every age and every skin tone, not just some.
+                        Your answers are only looked at in total, never shown to anyone, and you can skip both.
+                    </p>
+                    <p class="survey-sublabel mb-2">Your age range</p>
+                    {{ choices("age_range", "radio") }}
+                    {{ text("tone_description", "How would you describe your skin tone, in your own words?") }}
+                </fieldset>
+
+                <fieldset class="survey-step survey-question" data-part="To finish">
+                    <legend>13. May we contact you about early access? (optional)</legend>
+                    <p class="survey-hint">
+                        Leave your email and we'll use it only to invite you to try Huey early. We won't share it or add you
+                        to other lists. To have it deleted, email <a href="mailto:hello@huey-ai.com">hello@huey-ai.com</a>.
+                    </p>
+                    {{ text("email", "Email", type="email") }}
+                </fieldset>
+
+                {# Honeypot: hidden from people, filled in by spam bots #}
+                <div aria-hidden="true" class="contact-honeypot">
+                    <label for="nickname">Leave this empty</label>
+                    <input autocomplete="off" id="nickname" name="nickname" tabindex="-1" type="text">
+                </div>
+
+                <div class="survey-nav">
+                    <button class="btn btn-link survey-back" hidden type="button">&larr; Back</button>
+                    <button class="btn btn-primary survey-next" hidden type="button">Next</button>
+                    <button class="btn btn-primary survey-submit" type="submit">Send answers</button>
+                    <span class="survey-enter-hint" hidden>or press <kbd>Enter</kbd></span>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {% if not thanks %}
+        <script src="/static/survey.js"></script>
+    {% endif %}
+{% endblock %}

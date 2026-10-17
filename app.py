@@ -1,3 +1,4 @@
+import json
 import re
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
@@ -35,6 +36,41 @@ db.execute(
         website TEXT,
         message TEXT NOT NULL,
         user_id INTEGER,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+    """
+)
+
+# Answers from /questionnaire. Multi-choice answers are JSON lists, e.g. '["foundation", "hosiery"]';
+# every answer is optional, so any column may be NULL.
+db.execute(
+    """
+    CREATE TABLE IF NOT EXISTS questionnaire_responses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        categories_bought TEXT,
+        categories_bought_other TEXT,
+        shade_method TEXT,
+        shade_method_other TEXT,
+        wrong_shade TEXT,
+        given_up TEXT,
+        most_useful TEXT,
+        categories_first TEXT,
+        categories_first_other TEXT,
+        tone_input TEXT,
+        photo_comfort TEXT,
+        photo_comfort_improve TEXT,
+        trust_level TEXT,
+        trust_boosters TEXT,
+        trust_other TEXT,
+        buy_where TEXT,
+        buy_where_other TEXT,
+        buy_via_link TEXT,
+        wish TEXT,
+        age_range TEXT,
+        tone_description TEXT,
+        email TEXT,
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )
@@ -311,6 +347,7 @@ def delete_account():
         return apology("incorrect password", 400)
 
     db.execute("DELETE FROM contact_messages WHERE user_id = ?", session["user_id"])
+    db.execute("DELETE FROM questionnaire_responses WHERE user_id = ?", session["user_id"])
     db.execute("DELETE FROM gallery_entries WHERE user_id = ?", session["user_id"])
     db.execute("DELETE FROM profiles WHERE user_id = ?", session["user_id"])
     db.execute("DELETE FROM users WHERE id = ?", session["user_id"])
@@ -518,3 +555,158 @@ def contact():
     )
     flash("Thanks, your message has been sent. We'll reply by email.")
     return redirect("/contact")
+
+
+# Customer research questionnaire. Each list is (stored value, label shown).
+SURVEY_CATEGORIES = [
+    ("foundation", "Foundation or concealer"),
+    ("bandages", "Bandages or plasters"),
+    ("hosiery", "Tights or hosiery"),
+    ("sunscreen", "Tinted sunscreen"),
+    ("shoes", "Shoes, such as ballet flats"),
+    ("underwear", "Underwear or shapewear"),
+    ("dancewear", "Dance wear"),
+    ("hearing_aids", "Hearing aids"),
+    ("compression", "Compression wear"),
+    ("art_supplies", "Art supplies, such as skin-tone crayons"),
+    ("prosthetics", "Prosthetics"),
+    ("dolls_toys", "Dolls and toys"),
+    ("other", "Other"),
+]
+SURVEY_OPTIONS = {
+    "categories_bought": SURVEY_CATEGORIES + [("none", "None of these")],
+    "shade_method": [
+        ("swatch", "Swatched or tried it in store"),
+        ("trial_error", "Trial and error"),
+        ("reviews", "Read reviews"),
+        ("shade_finder", "Used the brand's shade finder"),
+        ("friend", "Asked a friend"),
+        ("guessed", "Guessed"),
+        ("other", "Other"),
+    ],
+    "wrong_shade": [
+        ("never", "Never"),
+        ("once_twice", "Once or twice"),
+        ("often", "Often"),
+        ("almost_always", "Almost every time"),
+    ],
+    "most_useful": [
+        ("across_categories", "Finding products in my tone across categories"),
+        ("discovery", "Seeing products I wouldn't have found elsewhere"),
+        ("compare_brands", "Comparing brands in my tone"),
+        ("single_match", "A shade match for one specific product"),
+        ("favourites", "Saving a list of favourites"),
+        ("alerts", "Alerts when new products arrive in my tone"),
+    ],
+    "categories_first": SURVEY_CATEGORIES,
+    "tone_input": [
+        ("selfie", "Take a selfie"),
+        ("upload", "Upload a photo"),
+        ("scale", "Pick from a scale of tones"),
+        ("words", "Describe it in words"),
+        ("no_preference", "No preference"),
+    ],
+    "photo_comfort": [
+        ("very", "Very comfortable"),
+        ("if_deleted", "Fine if it's deleted afterwards"),
+        ("no_upload", "Only if I never have to upload it"),
+        ("not", "Not comfortable"),
+    ],
+    "trust_level": [
+        ("not_at_all", "Not at all"),
+        ("a_little", "A little"),
+        ("quite_a_lot", "Quite a lot"),
+        ("completely", "Completely"),
+    ],
+    "trust_boosters": [
+        ("real_skin_photo", "A photo of the product on real skin"),
+        ("reviews_my_tone", "Reviews from people in my tone"),
+        ("brand_shade_info", "The brand's own shade information"),
+        ("tone_scale", "The tone shown on a scale"),
+        ("other", "Other"),
+    ],
+    "buy_where": [
+        ("brand_sites", "Brand websites"),
+        ("large_retailers", "Large retailers"),
+        ("marketplaces", "Marketplaces"),
+        ("pharmacies", "Pharmacies"),
+        ("in_store", "In store"),
+        ("other", "Other"),
+    ],
+    "buy_via_link": [("yes", "Yes"), ("maybe", "Maybe"), ("no", "No")],
+    "age_range": [
+        ("under_18", "Under 18"),
+        ("18_24", "18–24"),
+        ("25_34", "25–34"),
+        ("35_44", "35–44"),
+        ("45_54", "45–54"),
+        ("55_64", "55–64"),
+        ("65_plus", "65 or over"),
+        ("prefer_not", "Prefer not to say"),
+    ],
+}
+SURVEY_MULTI = {"categories_bought", "most_useful", "categories_first", "trust_boosters", "buy_where"}
+SURVEY_TEXT = [
+    "categories_bought_other", "shade_method_other", "given_up", "categories_first_other",
+    "photo_comfort_improve", "trust_other", "buy_where_other", "wish", "tone_description", "email",
+]
+MAX_ANSWER_LENGTH = 2000
+MAX_MOST_USEFUL = 3
+
+
+@app.route("/questionnaire", methods=["GET", "POST"])
+def questionnaire():
+    """Short research survey about shade-matching pain points; open to anyone"""
+    if request.method == "GET":
+        return render_template("questionnaire.html", options=SURVEY_OPTIONS, answers=request.form)
+
+    # Bots fill in every field, including this one that people never see
+    if request.form.get("nickname"):
+        return redirect("/questionnaire/thanks")
+
+    # Keep only answers that are real options, so the table holds clean values
+    answers = {}
+    for field, options in SURVEY_OPTIONS.items():
+        allowed = {value for value, _ in options}
+        if field in SURVEY_MULTI:
+            chosen = [value for value in request.form.getlist(field) if value in allowed]
+            answers[field] = json.dumps(chosen) if chosen else None
+        else:
+            value = request.form.get(field)
+            answers[field] = value if value in allowed else None
+    for field in SURVEY_TEXT:
+        answers[field] = request.form.get(field, "").strip() or None
+
+    # error_step is the question the page reopens at, so the problem is in view
+    error, error_step = None, 1
+    bought = request.form.getlist("categories_bought")
+    if "none" in bought and len(bought) > 1:
+        error = "In question 1, choose either “None of these” or the products you bought, not both."
+    elif len(request.form.getlist("most_useful")) > MAX_MOST_USEFUL:
+        error, error_step = f"In question 5, choose up to {MAX_MOST_USEFUL} options.", 5
+    elif any(len(answers[field] or "") > MAX_ANSWER_LENGTH for field in SURVEY_TEXT):
+        error = f"Please keep each written answer under {MAX_ANSWER_LENGTH} characters."
+    elif answers["email"] and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", answers["email"]):
+        error, error_step = "Enter a valid email address in question 13, or leave it blank.", 13
+    elif not any(answers.values()):
+        error = "Please answer at least one question before sending."
+    if error:
+        return render_template(
+            "questionnaire.html", options=SURVEY_OPTIONS, answers=request.form,
+            error=error, error_step=error_step,
+        ), 400
+
+    if answers["email"]:
+        answers["email"] = answers["email"].lower()
+    columns = list(answers)
+    db.execute(
+        f"INSERT INTO questionnaire_responses ({', '.join(columns)}, user_id) "
+        f"VALUES ({', '.join('?' * len(columns))}, ?)",
+        *answers.values(), session.get("user_id"),
+    )
+    return redirect("/questionnaire/thanks")
+
+
+@app.route("/questionnaire/thanks")
+def questionnaire_thanks():
+    return render_template("questionnaire.html", thanks=True)

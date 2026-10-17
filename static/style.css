@@ -633,6 +633,271 @@ main:has(.signup-page) {
     font-size: 0.875rem;
 }
 
+/* Questionnaire page */
+.survey-page {
+    max-width: 760px;
+    padding: 3rem 1rem;
+    text-align: left;
+}
+
+.survey-part {
+    margin: 2.5rem 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.survey-question {
+    margin-bottom: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    background-color: #fff;
+}
+
+.survey-question legend,
+.survey-legend {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.survey-hint {
+    margin-top: -0.5rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.survey-sublabel {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.survey-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.survey-enter-hint {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.survey-thanks {
+    padding: 4rem 0;
+}
+
+/* Survey colours: dark page, green accent */
+main:has(.survey-page) {
+    background-color: rgb(26, 26, 26);
+}
+
+.survey-page {
+    --survey-accent: rgb(168, 214, 142);
+    --survey-accent-hover: rgb(148, 198, 120);
+    --survey-text: #f2f2f2;
+    --survey-muted: rgba(242, 242, 242, 0.65);
+    --survey-card: rgb(38, 38, 38);
+    --survey-line: rgba(242, 242, 242, 0.2);
+    color: var(--survey-text);
+}
+
+.survey-page p {
+    color: var(--survey-muted);
+}
+
+/* Bootstrap's .text-muted uses !important, so this has to as well */
+.survey-page .text-muted {
+    color: var(--survey-muted) !important;
+}
+
+.survey-page h1,
+.survey-page legend,
+.survey-page .survey-legend,
+.survey-page .form-check-label,
+.survey-page .survey-sublabel {
+    color: var(--survey-text);
+}
+
+.survey-page a {
+    color: var(--survey-accent);
+}
+
+.survey-page .survey-question {
+    background-color: var(--survey-card);
+}
+
+.survey-page .survey-hint,
+.survey-page .survey-count,
+.survey-page .survey-enter-hint,
+.survey-page .survey-question[data-part]::before {
+    color: var(--survey-muted);
+}
+
+/* Inputs: dark fields, accent when focused or ticked */
+.survey-page .form-control,
+.survey-page .form-check-input {
+    border-color: var(--survey-line);
+    background-color: rgb(26, 26, 26);
+    color: var(--survey-text);
+}
+
+.survey-page .form-control:focus,
+.survey-page .form-check-input:focus {
+    border-color: var(--survey-accent);
+    box-shadow: 0 0 0 0.2rem rgba(168, 214, 142, 0.3);
+}
+
+/* Dark tick and dot, since white ones are hard to see on the light green */
+.survey-page .form-check-input:checked {
+    border-color: var(--survey-accent);
+    background-color: var(--survey-accent);
+    --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%231a1a1a' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+.survey-page .form-check-input[type=radio]:checked {
+    --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%231a1a1a'/%3e%3c/svg%3e");
+}
+
+.survey-page .form-check-input:disabled ~ .form-check-label {
+    color: var(--survey-muted);
+}
+
+.survey-page .btn-primary {
+    --bs-btn-bg: var(--survey-accent);
+    --bs-btn-color: #1a1a1a;
+    --bs-btn-border-color: var(--survey-accent);
+    --bs-btn-hover-bg: var(--survey-accent-hover);
+    --bs-btn-hover-color: #1a1a1a;
+    --bs-btn-hover-border-color: var(--survey-accent-hover);
+    --bs-btn-active-bg: var(--survey-accent-hover);
+    --bs-btn-active-color: #1a1a1a;
+    background-color: var(--bs-btn-bg);
+    color: var(--bs-btn-color);
+    font-weight: 600;
+}
+
+.survey-page .btn-primary:hover {
+    background-color: var(--bs-btn-hover-bg);
+}
+
+.survey-page .btn-link {
+    color: var(--survey-text);
+    text-decoration: none;
+}
+
+.survey-page .survey-progress {
+    background-color: rgba(242, 242, 242, 0.12);
+}
+
+.survey-page .survey-progress-bar {
+    background-color: var(--survey-accent);
+}
+
+
+/* One question per screen (survey.js adds .is-stepped) */
+.survey-progress {
+    position: sticky;
+    top: 20px;
+    z-index: 10;
+    height: 4px;
+    /* 20px of space above the bar (padding would squash a 4px bar), also kept while it sticks */
+    margin: calc(-3rem + 20px) 0 2.5rem;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.survey-progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: #323232;
+    transition: width 0.4s ease;
+}
+
+.survey-count {
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.survey-form.is-stepped .survey-step {
+    display: none;
+}
+
+.survey-form.is-stepped .survey-step.is-active {
+    display: block;
+}
+
+.survey-form.is-stepped .survey-step:focus {
+    outline: none;
+}
+
+.survey-form.is-stepped .survey-question {
+    min-height: 45vh;
+    padding: 2rem;
+}
+
+.survey-form.is-stepped .survey-question legend,
+.survey-form.is-stepped .survey-legend {
+    font-size: 1.35rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Section name above each question */
+.survey-question[data-part]::before {
+    content: attr(data-part);
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.survey-step.enter-forward {
+    animation: survey-in-forward 0.35s ease both;
+}
+
+.survey-step.enter-back {
+    animation: survey-in-back 0.35s ease both;
+}
+
+@keyframes survey-in-forward {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes survey-in-back {
+    from {
+        opacity: 0;
+        transform: translateY(-16px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .survey-step.enter-forward,
+    .survey-step.enter-back {
+        animation: none;
+    }
+
+    .survey-progress-bar {
+        transition: none;
+    }
+}
+
 /* Off-screen rather than display: none, which some bots skip */
 .contact-honeypot {
     position: absolute;
@@ -667,7 +932,8 @@ main:has(.signup-page) {
     background-color: RGB(236,219,204);
 }
 
-form {
+/* Scoped to setup; as a bare `form` rule it squeezed every form on the site to half width */
+.tone-setup form {
     width: 50%;
     margin: auto;
 }
