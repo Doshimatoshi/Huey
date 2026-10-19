@@ -940,6 +940,46 @@ main:has(.profile-page),
     border-color: var(--light-accent);
 }
 
+/* Phones: once the three tone options stack, show them as compact rows
+   (icon beside title and text) instead of near-square cards that each fill the screen */
+@media (max-width: 767.98px) {
+    .profile-page .card.index {
+        aspect-ratio: auto;
+    }
+
+    .profile-page .card-body-index {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        grid-template-areas:
+            "icon title"
+            "icon text";
+        align-items: center;
+        column-gap: 1rem;
+        row-gap: 0.125rem;
+        width: auto;
+        margin: 0;
+        padding: 0.875rem 1rem;
+        text-align: left;
+    }
+
+    .profile-page .card-body-index .icons {
+        grid-area: icon;
+        width: 40px;
+    }
+
+    .profile-page .card-body-index .card-title {
+        grid-area: title;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .profile-page .card-body-index .card-text {
+        grid-area: text;
+        margin: 0;
+        text-align: left;
+    }
+}
+
 
 /* One question per screen (survey.js adds .is-stepped) */
 .survey-progress {
