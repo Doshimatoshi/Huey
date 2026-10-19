@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Privacy
+{% endblock %}
+
+{% block main %}
+    {# Same layout and colours as the About page #}
+    <div class="about-page">
+        <div class="container">
+            <article class="about-article">
+                <h1 class="h2 about mb-1">Your privacy</h1>
+                <p class="lead">
+                    Huey asks for a photo of your face, so we want to be clear about exactly what happens to it,
+                    and to everything else you share with us.
+                </p>
+                <p class="small">Last updated 19 October 2026</p>
+
+                <h2 class="h4 mt-4">Your photo is never stored</h2>
+                <p>
+                    When you upload a photo or take a selfie, your image is sent securely to our server, analyzed in memory,
+                    and discarded as soon as the result is returned. It is not saved, logged or shared, and it is never used
+                    to train anything. We don't keep the skin colour measured from it either, only the Monk Skin Tone you choose to save.
+                </p>
+
+                <h2 class="h4 mt-4">What we keep</h2>
+                <p>If you create an account:</p>
+                <ul>
+                    <li>Your username, email address, and a securely hashed password. We never see or store your actual password.</li>
+                    <li>Your chosen Monk Skin Tone and, if it came from a photo, how clear the match was.</li>
+                    <li>Your answer to how reactive your skin is to the sun.</li>
+                </ul>
+                <p>Only if you choose to send them:</p>
+                <ul>
+                    <li>
+                        <strong>Contact form messages:</strong> your name, email address, message and, for brands,
+                        your company and website, so we can reply.
+                    </li>
+                    <li>
+                        <strong>Questionnaire answers:</strong> every question is optional, including your age range,
+                        how you describe your skin tone and your email address. Answers are only looked at in total and
+                        are never shown to anyone. If you leave your email, we use it only to invite you to try Huey early.
+                    </li>
+                </ul>
+                <p>If you're signed in when you send a message or answer the questionnaire, it's linked to your account.</p>
+
+                <h2 class="h4 mt-4">How we use it</h2>
+                <p>
+                    We use your tone and sensitivity only to show you products that match them. Your email is used to sign you in,
+                    to reply when you contact us, and, if you asked for it in the questionnaire, to invite you to try Huey early.
+                    We don't sell any of it or share it with advertisers.
+                </p>
+
+                <h2 class="h4 mt-4">Cookies</h2>
+                <p>
+                    We use a single cookie to keep you signed in. It's removed when you close your browser.
+                    There are no advertising or tracking cookies.
+                </p>
+
+                <h2 class="h4 mt-4">Other services</h2>
+                <p>
+                    Huey's page styling is loaded from jsDelivr, a public content network, which sees your IP address
+                    when your browser fetches it. Like most websites, the servers that host Huey may keep standard technical logs,
+                    such as IP addresses and the pages requested, to keep the site secure and working.
+                    Retailer links open the retailer's own site, where their privacy policy applies.
+                </p>
+
+                <h2 class="h4 mt-4">Deleting your data</h2>
+                <p>
+                    Use <strong>Delete account</strong> on your profile page to permanently delete your account, your skin profile
+                    and any messages or questionnaire answers linked to it. To see what we hold about you, correct it, or delete
+                    something you sent without an account, email us at <a href="mailto:hello@huey.com">hello@huey.com</a>.
+                </p>
+
+                <h2 class="h4 mt-4">Changes</h2>
+                <p>
+                    If we change how we handle your data, we'll update this page and the date at the top.
+                    Questions: <a href="mailto:hello@huey.com">hello@huey.com</a>.
+                </p>
+            </article>
+        </div>
+    </div>
+{% endblock %}

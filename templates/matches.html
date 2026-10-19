@@ -32,8 +32,8 @@
                     <h2 class="h5 mb-1">Your tone: {{ profile["mst_value"] }} of 10</h2>
                     <p class="text-muted mb-1">
                         {% if profile["confidence"] %}
-                            Read from your photo with {{ profile["confidence"] }} confidence.
-                            {% if profile["confidence"] == "low" %}Worth a quick check.{% endif %}
+                            Read from your photo: {{ match_wording[profile["confidence"]] }}.
+                            {% if profile["confidence"] != "high" %}Worth a quick check.{% endif %}
                         {% else %}
                             Chosen by you.
                         {% endif %}
@@ -41,8 +41,6 @@
                     </p>
                     <p class="small mb-0">
                         <a href="/profile">Adjust tone</a>
-                        <span class="text-muted mx-1">&middot;</span>
-                        <a href="/profile#find-tone">Retake photo</a>
                     </p>
                 </div>
             </div>

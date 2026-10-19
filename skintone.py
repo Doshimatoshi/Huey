@@ -28,6 +28,12 @@ MIN_BACKGROUND_SHARE = 0.05
 GAIN_LIMITS = (0.7, 1.4)  # stop white balance from over-correcting
 LUMA = np.array([0.2126, 0.7152, 0.0722])
 
+# How much light each kind of reference card reflects (linear luminance).
+# An 18% grey card is the photographic standard; plain white paper is about 85%.
+CARD_REFLECTANCE = {"grey": 0.18, "white": 0.85}
+EXPOSURE_LIMITS = (0.25, 4.0)  # beyond two stops either way, ask for a better photo
+CLIPPED = 0.97                 # a card brighter than this has lost detail
+
 
 class SkinToneError(Exception):
     """Raised when the photo can't be analyzed; the message is shown to the user."""
@@ -163,8 +169,12 @@ def _clamp_gains(gains):
     return np.clip(gains, *GAIN_LIMITS)
 
 
-def gains_from_reference(linear, x, y):
-    """User clicked a white or grey card: make that patch neutral."""
+def gains_from_reference(linear, x, y, card="grey"):
+    """
+    User clicked a white or grey card: make that patch neutral, then scale the
+    whole photo so the card comes out at its known brightness.
+    Returns (colour gains, exposure).
+    """
     h, w = linear.shape[:2]
     half = SAMPLE // 2
     left = int(np.clip(x - half, 0, w - SAMPLE))
@@ -172,7 +182,16 @@ def gains_from_reference(linear, x, y):
     patch = linear[top:top + SAMPLE, left:left + SAMPLE].reshape(-1, 3).mean(axis=0)
     if patch.min() < 0.01:
         raise SkinToneError("The reference point is too dark. Click a white or grey area.")
-    return _clamp_gains(patch.mean() / patch)
+    if patch.max() > CLIPPED:
+        raise SkinToneError("The card is too bright to read. Retake the photo out of direct light.")
+
+    gains = _clamp_gains(patch.mean() / patch)
+    exposure = CARD_REFLECTANCE[card] / ((patch * gains) @ LUMA)
+    if not EXPOSURE_LIMITS[0] <= exposure <= EXPOSURE_LIMITS[1]:
+        problem = "dark" if exposure > 1 else "bright"
+        raise SkinToneError(f"The photo is too {problem} to correct. Retake it in even, indirect light "
+                            f"and check you picked the right card type.")
+    return gains, exposure
 
 
 def gains_from_background(linear, background):
@@ -222,12 +241,16 @@ def _preview(srgb):
     return "data:image/jpeg;base64," + base64.b64encode(buf).decode()
 
 
-def analyze(image_bytes, reference=None, palette=None):
+def analyze(image_bytes, reference=None, palette=None, card="grey"):
     """
     image_bytes: uploaded file contents.
     reference:   optional (x, y) in 0–1 image coordinates of a white/grey card.
+                 With a card, both colour and brightness are corrected.
     palette:     optional list of hex values (lightest first), e.g. from the mst_scale table.
+    card:        "grey" (18% grey card) or "white" (plain white paper).
     """
+    if card not in CARD_REFLECTANCE:
+        raise ValueError(f"card must be one of {sorted(CARD_REFLECTANCE)}")
     img = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
     if img is None:
         raise SkinToneError("That file isn't an image we can read. Upload a JPEG or PNG.")
@@ -245,15 +268,16 @@ def analyze(image_bytes, reference=None, palette=None):
 
     # 2. white balance
     linear = srgb_to_linear(rgb / 255)
+    exposure = 1.0  # only a reference card tells us how bright the scene really is
     if reference is not None:
-        gains = gains_from_reference(linear, reference[0] * w, reference[1] * h)
+        gains, exposure = gains_from_reference(linear, reference[0] * w, reference[1] * h, card)
         wb_method = "reference"
     else:
         gains = gains_from_background(linear, ~person)
         wb_method = "background" if gains is not None else "none"
     if gains is None:
         gains = np.ones(3)
-    corrected = linear_to_srgb(linear * gains)
+    corrected = linear_to_srgb(linear * gains * exposure)
 
     # 3. measure and match
     raw_lab = measure_skin(rgb / 255, skin)
@@ -271,7 +295,8 @@ def analyze(image_bytes, reference=None, palette=None):
         "measured_hex": lab_to_hex(lab),
         "raw_hex": lab_to_hex(raw_lab),
         "lab": [round(float(v), 1) for v in lab],
-        "white_balance": {"method": wb_method, "gains": [round(float(g), 3) for g in gains]},
+        "white_balance": {"method": wb_method, "gains": [round(float(g), 3) for g in gains],
+                          "exposure": round(float(exposure), 3), "card": card if reference else None},
         "detector": detector,
         "preview": _preview(corrected),
     }

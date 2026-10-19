@@ -39,12 +39,17 @@
             {% for cards, direction in [(left_cards, "up"), (right_cards, "down")] %}
                 <div class="gallery-col gallery-col-{{ direction }}">
                     {% for image, label, category in cards + cards %}
-                        <div class="gallery-card" style="background-image: url('/static/images/landing/{{ image }}')">
-                            {% if category not in categories %}
+                        {# Cards with products link to them; the gallery is decorative, so they stay out of the tab order #}
+                        {% if category in categories %}
+                            <a class="gallery-card" href="/products?category={{ category | urlencode }}" style="background-image: url('/static/images/landing/{{ image }}')" tabindex="-1">
+                                <span class="gallery-card-label">{{ label }}</span>
+                            </a>
+                        {% else %}
+                            <div class="gallery-card" style="background-image: url('/static/images/landing/{{ image }}')">
                                 <span class="gallery-card-soon">Coming soon</span>
-                            {% endif %}
-                            <span class="gallery-card-label">{{ label }}</span>
-                        </div>
+                                <span class="gallery-card-label">{{ label }}</span>
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endfor %}

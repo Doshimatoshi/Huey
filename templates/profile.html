@@ -18,13 +18,14 @@
                         <span class="tone-swatch" style="background-color: {{ profile['hex_value'] }}"></span>
                         <div>
                             <h2 class="h5 mb-1">Your tone: {{ profile["mst_value"] }} of 10</h2>
-                            <p class="text-muted mb-0">
+                            <p class="text-muted mb-1">
                                 {% if profile["confidence"] %}
-                                    Read from your photo with {{ profile["confidence"] }} confidence.
+                                    Read from your photo: {{ match_wording[profile["confidence"]] }}.
                                 {% else %}
                                     Chosen by you.
                                 {% endif %}
                             </p>
+                            <p class="small mb-0"><a href="#find-tone">Adjust tone</a></p>
                         </div>
                     </div>
 
@@ -127,13 +128,14 @@
                 <h2 class="h5 mb-1">Privacy</h2>
                 <p class="text-muted">
                     Your photo is never stored. It's analysed in memory and discarded as soon as your tone is returned.
-                    We keep only your account details, your tone and your sensitivity. <a href="/about">More about your privacy</a>
+                    We keep your account details, your tone and your sensitivity, plus anything you send us through the contact form or questionnaire.
+                    <a href="/privacy">Read our privacy policy</a>
                 </p>
                 <form action="/delete_account" class="d-flex flex-wrap gap-2" method="post">
                     <input aria-label="Password" autocomplete="current-password" class="form-control w-auto" name="password" placeholder="Password" required type="password">
                     <button class="btn btn-outline-danger" type="submit">Delete account</button>
                 </form>
-                <p class="text-muted small mt-2 mb-0">This permanently deletes your account and skin profile. Enter your password to confirm.</p>
+                <p class="text-muted small mt-2 mb-0">This permanently deletes your account, your skin profile and anything linked to them. Enter your password to confirm.</p>
             </section>
         </div>
     </div>

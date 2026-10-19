@@ -39,7 +39,8 @@
                 <h1 class="h3 mb-4">{{ "Upload an image" if method == "upload" else "Take a selfie" }}</h1>
                 <p class="text-muted setup">
                     We'll detect your face and estimate your Monk Skin Tone automatically. Use even, natural light for the best result.
-                    Your photo is analyzed and then discarded. It's never stored.
+                    For the most accurate match, hold a sheet of plain white paper or a grey card next to your face, facing the camera.
+                    Your photo is analyzed and then discarded. It's never stored. <a href="/privacy">Privacy policy</a>
                 </p>
 
                 {% if method == "upload" %}
@@ -63,11 +64,15 @@
                     </div>
                 </div>
 
-                <div class="mb-2" hidden id="photo-actions">
-                    <button class="btn btn-outline-secondary btn-sm" id="pick-ref" type="button">Set white point</button>
-                    <button class="btn btn-link btn-sm" hidden id="clear-ref" type="button">Use automatic white balance</button>
+                <div class="mb-2 d-flex flex-wrap gap-2 justify-content-center align-items-center" hidden id="photo-actions">
+                    <select aria-label="Card type" class="form-select form-select-sm w-auto" id="card-type">
+                        <option value="white" selected>White paper</option>
+                        <option value="grey">Grey card</option>
+                    </select>
+                    <button class="btn btn-outline-secondary btn-sm" id="pick-ref" type="button">Mark your card</button>
+                    <button class="btn btn-link btn-sm" hidden id="clear-ref" type="button">Don't use a card</button>
                 </div>
-                <p class="text-muted small" hidden id="ref-hint">Click something white or light grey in the photo, like a sheet of paper or a plain wall, to correct for lighting.</p>
+                <p class="text-muted small" hidden id="ref-hint">Click the paper or card you're holding next to your face. We'll use it to correct the photo's colour and brightness.</p>
 
                 <p class="mb-3" hidden id="analyzing" role="status">Analyzing photo&hellip;</p>
                 <p class="text-danger mb-3" hidden id="analysis-error" role="alert"></p>

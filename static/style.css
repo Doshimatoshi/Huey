@@ -172,6 +172,16 @@ p {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
+a.gallery-card {
+    display: block;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+a.gallery-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+}
+
 /* MST tone picker */
 .mst-swatch {
     display: inline-block;
@@ -406,6 +416,16 @@ main:has(.signup-page) {
 
 .signup-login {
     margin: 2rem 0 0;
+}
+
+.signup-privacy,
+.signup-privacy a {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.signup-privacy {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
 }
 
 .signup-login a {
@@ -796,6 +816,131 @@ main:has(.survey-page) {
 }
 
 
+/* Setup and profile pages: light neutral grey, so skin swatches and photos aren't
+   skewed by a coloured or dark surround, with the questionnaire's near-black as the accent */
+main:has(.tone-setup),
+main:has(.profile-page),
+.tone-setup,
+#index-home:has(.profile-page) {
+    background-color: rgb(242, 242, 242);
+}
+
+.tone-setup,
+.profile-page {
+    --light-accent: rgb(26, 26, 26);          /* button fill, the questionnaire's background */
+    --light-accent-hover: rgb(50, 50, 50);
+    --light-accent-text: #fff;                /* text on the fill */
+    --light-text: #1a1a1a;
+    --light-muted: rgba(26, 26, 26, 0.68);    /* 5.7:1 on the page */
+    --light-line: rgba(26, 26, 26, 0.18);
+    --light-danger: #b42318;                  /* Bootstrap's red is too faint here */
+    color: var(--light-text);
+}
+
+/* Bootstrap's .text-muted uses !important, so this has to as well */
+.tone-setup .text-muted,
+.profile-page .text-muted {
+    color: var(--light-muted) !important;
+}
+
+.tone-setup .text-danger {
+    color: var(--light-danger) !important;
+}
+
+.tone-setup a:not(.btn),
+.profile-page a:not(.btn) {
+    color: var(--light-text);
+}
+
+.tone-setup .btn-link {
+    color: var(--light-text);
+}
+
+.tone-setup .btn-primary,
+.profile-page .btn-primary {
+    --bs-btn-color: var(--light-accent-text);
+    --bs-btn-bg: var(--light-accent);
+    --bs-btn-border-color: var(--light-accent);
+    --bs-btn-hover-color: var(--light-accent-text);
+    --bs-btn-hover-bg: var(--light-accent-hover);
+    --bs-btn-hover-border-color: var(--light-accent-hover);
+    --bs-btn-active-color: var(--light-accent-text);
+    --bs-btn-active-bg: var(--light-accent-hover);
+    --bs-btn-active-border-color: var(--light-accent-hover);
+    background-color: var(--bs-btn-bg);
+    color: var(--bs-btn-color);
+    font-weight: 600;
+}
+
+.tone-setup .btn-primary:hover,
+.profile-page .btn-primary:hover {
+    background-color: var(--bs-btn-hover-bg);
+}
+
+.tone-setup .btn-outline-secondary,
+.profile-page .btn-outline-secondary {
+    --bs-btn-color: var(--light-text);
+    --bs-btn-border-color: rgba(26, 26, 26, 0.35);
+    --bs-btn-hover-color: var(--light-accent-text);
+    --bs-btn-hover-bg: var(--light-accent);
+    --bs-btn-hover-border-color: var(--light-accent);
+    --bs-btn-active-color: var(--light-accent-text);
+    --bs-btn-active-bg: var(--light-accent);
+    --bs-btn-active-border-color: var(--light-accent);
+}
+
+.profile-page .btn-outline-danger {
+    --bs-btn-color: var(--light-danger);
+    --bs-btn-border-color: var(--light-danger);
+    --bs-btn-hover-bg: var(--light-danger);
+    --bs-btn-hover-border-color: var(--light-danger);
+    --bs-btn-active-bg: var(--light-danger);
+    --bs-btn-active-border-color: var(--light-danger);
+}
+
+.tone-setup .form-select,
+.profile-page .form-select,
+.profile-page .form-control {
+    border-color: rgba(26, 26, 26, 0.35);
+}
+
+.tone-setup .form-select:focus,
+.profile-page .form-select:focus,
+.profile-page .form-control:focus {
+    border-color: var(--light-accent);
+    box-shadow: 0 0 0 0.2rem rgba(26, 26, 26, 0.2);
+}
+
+.tone-setup .dropdown-menu {
+    --bs-dropdown-link-active-color: var(--light-accent-text);
+    --bs-dropdown-link-active-bg: var(--light-accent);
+}
+
+/* The lightest tones are almost the page's own lightness, so outline every swatch */
+.tone-setup .mst-swatch,
+.profile-page .mst-swatch,
+.profile-page .tone-swatch {
+    border-color: rgba(26, 26, 26, 0.3);
+}
+
+.tone-setup .photo-stage canvas.picking {
+    outline-color: var(--light-accent);
+}
+
+.profile-page .profile-section {
+    border-bottom-color: var(--light-line);
+}
+
+.profile-page .card.index {
+    border-color: var(--light-line);
+    background-color: #fff;
+}
+
+.profile-page .card.index:hover {
+    border-color: var(--light-accent);
+}
+
+
 /* One question per screen (survey.js adds .is-stepped) */
 .survey-progress {
     position: sticky;
@@ -922,14 +1067,13 @@ main:has(.survey-page) {
 }
 
 
-/* Tone or setup page */
+/* Tone or setup page (colours are in the questionnaire section below) */
 .tone-setup {
     min-width: 100vw;
     min-height: 100vh;
     overflow: hidden;
     padding: 3rem;
     align-content: top;
-    background-color: RGB(236,219,204);
 }
 
 /* Scoped to setup; as a bare `form` rule it squeezed every form on the site to half width */

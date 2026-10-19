@@ -49,6 +49,7 @@ if (METHOD === "hex") {
     const confidenceValue = document.getElementById("confidence");
     const photoActions = document.getElementById("photo-actions");
     const pickRef = document.getElementById("pick-ref");
+    const cardType = document.getElementById("card-type");
     const clearRef = document.getElementById("clear-ref");
     const refHint = document.getElementById("ref-hint");
     const analyzing = document.getElementById("analyzing");
@@ -76,7 +77,7 @@ if (METHOD === "hex") {
 
     function updateReferenceUI() {
         canvas.classList.toggle("picking", picking);
-        pickRef.textContent = picking ? "Cancel" : "Set white point";
+        pickRef.textContent = picking ? "Cancel" : "Mark your card";
         refHint.hidden = !picking;
         clearRef.hidden = !reference;
         marker.hidden = !reference;
@@ -152,6 +153,7 @@ if (METHOD === "hex") {
         analysisError.hidden = true;
         pickRef.disabled = true;
         clearRef.disabled = true;
+        cardType.disabled = true;
 
         try {
             const blob = await canvasToBlob();
@@ -160,6 +162,7 @@ if (METHOD === "hex") {
             if (reference) {
                 formData.append("ref_x", reference.x);
                 formData.append("ref_y", reference.y);
+                formData.append("card", cardType.value);
             }
 
             const response = await fetch("/setup/analyze", { method: "POST", body: formData });
@@ -175,7 +178,7 @@ if (METHOD === "hex") {
             const topMatch = matchList.querySelector(`[data-mst-id="${result.mst_id}"]`);
             if (topMatch) selectMatch(topMatch);
         } catch (err) {
-            // Keep any earlier result on screen, so a bad white point doesn't wipe it
+            // Keep any earlier result on screen, so a badly marked card doesn't wipe it
             analysisError.textContent = err.message || "Couldn't analyze that photo. Try another one.";
             analysisError.hidden = false;
         } finally {
@@ -183,8 +186,14 @@ if (METHOD === "hex") {
             analyzing.hidden = true;
             pickRef.disabled = false;
             clearRef.disabled = false;
+            cardType.disabled = false;
         }
     }
+
+    // The card type only matters once a card has been marked
+    cardType.addEventListener("change", () => {
+        if (reference) analyzePhoto();
+    });
 
     pickRef.addEventListener("click", () => {
         picking = !picking;
@@ -197,7 +206,7 @@ if (METHOD === "hex") {
         analyzePhoto();
     });
 
-    // Clicks on the photo only count while "Set white point" is active
+    // Clicks on the photo only count while "Mark your card" is active
     canvas.addEventListener("click", (event) => {
         if (!picking || busy) return;
         const rect = canvas.getBoundingClientRect();

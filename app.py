@@ -4,11 +4,19 @@ from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from skintone import SkinToneError, analyze
+from skintone import CARD_REFLECTANCE, SkinToneError, analyze
 from helpers import apology, login_required
 
 # Configure application
 app = Flask(__name__)
+
+# How a photo reading's confidence is worded on the profile and matches pages.
+# It measures how far ahead the top tone is of the next one, not whether the reading is right.
+app.jinja_env.globals["match_wording"] = {
+    "high": "a clear match",
+    "medium": "a fairly close match",
+    "low": "a close call between two tones",
+}
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -477,9 +485,13 @@ def setup_analyze():
         if not all(0 <= v <= 1 for v in reference):
             return jsonify(error="Invalid white point."), 400
 
+    card = request.form.get("card", "white")
+    if card not in CARD_REFLECTANCE:
+        return jsonify(error="Invalid card type."), 400
+
     mst_scale = get_mst_scale()
     try:
-        result = analyze(photo.read(), reference, palette=[row["hex_value"] for row in mst_scale])
+        result = analyze(photo.read(), reference, palette=[row["hex_value"] for row in mst_scale], card=card)
     except SkinToneError as e:
         return jsonify(error=str(e)), 400
 
@@ -490,6 +502,12 @@ def setup_analyze():
         match["label"] = row["label"]
     result["mst_id"] = result["matches"][0]["id"]
     return jsonify(result)
+
+
+# Privacy policy
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
 
 
 # About Huey page
