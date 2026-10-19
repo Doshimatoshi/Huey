@@ -8,6 +8,7 @@ Skin tone pipeline
 """
 
 import base64
+import logging
 from pathlib import Path
 
 import cv2
@@ -66,18 +67,27 @@ MST_LAB = rgb2lab(np.array([[hex_to_rgb01(h) for h in MST_PALETTE]]))[0]
 # ---------- step 1: face and skin mask ----------
 
 _landmarker = None
+_landmarker_failed = False
 
 
 def _get_landmarker():
-    """Load the MediaPipe model once. Returns None if it isn't installed."""
-    global _landmarker
-    if _landmarker is None and MODEL_PATH.exists():
-        from mediapipe.tasks.python import BaseOptions, vision
-        options = vision.FaceLandmarkerOptions(
-            base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),
-            num_faces=1,
-        )
-        _landmarker = vision.FaceLandmarker.create_from_options(options)
+    """
+    Load the MediaPipe model once. Returns None if it isn't installed or can't load,
+    e.g. on a server missing the system graphics libraries (libEGL) it needs,
+    so analysis falls back to OpenCV instead of failing.
+    """
+    global _landmarker, _landmarker_failed
+    if _landmarker is None and not _landmarker_failed and MODEL_PATH.exists():
+        try:
+            from mediapipe.tasks.python import BaseOptions, vision
+            options = vision.FaceLandmarkerOptions(
+                base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),
+                num_faces=1,
+            )
+            _landmarker = vision.FaceLandmarker.create_from_options(options)
+        except Exception:
+            logging.getLogger(__name__).exception("MediaPipe face landmarker unavailable, using OpenCV instead")
+            _landmarker_failed = True
     return _landmarker
 
 
