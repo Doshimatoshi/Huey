@@ -1067,19 +1067,29 @@ main:has(.profile-page),
 }
 
 
-/* Tone or setup page (colours are in the questionnaire section below) */
-.tone-setup {
-    min-width: 100vw;
-    min-height: 100vh;
-    overflow: hidden;
-    padding: 3rem;
-    align-content: top;
+/* Tone or setup page (colours are with the profile page's, above).
+   Fills main without its side padding, like the login and signup pages, so it never runs wider than the screen. */
+main:has(.tone-setup) {
+    max-width: none !important;
+    padding: 0 !important;
 }
 
-/* Scoped to setup; as a bare `form` rule it squeezed every form on the site to half width */
+.tone-setup {
+    padding: 3rem 1.5rem;
+}
+
+/* Scoped to setup; as a bare `form` rule it squeezed every form on the site to half width.
+   A max width rather than a percentage, so phones get the full width */
 .tone-setup form {
-    width: 50%;
+    width: 100%;
+    max-width: 600px;
     margin: auto;
+}
+
+@media (max-width: 576px) {
+    .tone-setup {
+        padding: 2rem 1rem;
+    }
 }
 
 .text-muted.setup, .mb-3.setup {
