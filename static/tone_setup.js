@@ -166,8 +166,15 @@ if (METHOD === "hex") {
             }
 
             const response = await fetch("/setup/analyze", { method: "POST", body: formData });
-            const result = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(result.error || "Couldn't analyze that photo. Try another one.");
+            // A signed-out request is redirected to the login page, which comes back as HTML
+            if (response.redirected && new URL(response.url).pathname === "/login") {
+                throw new Error("You've been signed out. Log in again to analyze your photo.");
+            }
+            const isJson = (response.headers.get("Content-Type") || "").includes("application/json");
+            const result = isJson ? await response.json() : {};
+            if (!response.ok || !isJson) {
+                throw new Error(result.error || `Couldn't analyze that photo (error ${response.status}). Try another one.`);
+            }
 
             hexValue.value = result.measured_hex;
             analysis = { mstId: result.mst_id, confidence: result.confidence };

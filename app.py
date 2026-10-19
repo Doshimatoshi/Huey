@@ -494,6 +494,10 @@ def setup_analyze():
         result = analyze(photo.read(), reference, palette=[row["hex_value"] for row in mst_scale], card=card)
     except SkinToneError as e:
         return jsonify(error=str(e)), 400
+    except Exception:
+        # Log the full traceback for us, and still answer the page in JSON so it can show a message
+        app.logger.exception("Photo analysis failed")
+        return jsonify(error="Something went wrong analyzing that photo. Try again, or choose your tone from the scale."), 500
 
     # Translate tone positions (1–10) into your mst_scale ids and labels
     for match in result["matches"]:
