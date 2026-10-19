@@ -6,12 +6,6 @@
 
 {% block main %}
     <div class="tone-setup">
-        {% if profile %}
-            <p class="text-muted mb-4">
-                <span class="mst-swatch align-middle me-1" style="background-color: {{ profile['hex_value'] }}"></span>
-                Your saved tone is {{ profile["mst_value"] }} of 10. It stays until you save a new one.
-            </p>
-        {% endif %}
         <form action="/setup" data-method="{{ method }}" method="post">
             {% if method == "hex" %}
                 <h1 class="h3 mb-1">Choose your Monk Skin Tone</h1>
@@ -38,9 +32,8 @@
             {% else %}
                 <h1 class="h3 mb-4">{{ "Upload an image" if method == "upload" else "Take a selfie" }}</h1>
                 <p class="text-muted setup">
-                    We'll detect your face and estimate your Monk Skin Tone automatically. Use even, natural light for the best result.
+                    Use even, natural light for the best result.
                     For the most accurate match, hold a sheet of plain white paper or a grey card next to your face, facing the camera.
-                    Your photo is analyzed and then discarded. It's never stored. <a href="/privacy">Privacy policy</a>
                 </p>
 
                 {% if method == "upload" %}
